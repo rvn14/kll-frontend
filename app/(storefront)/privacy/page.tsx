@@ -1,0 +1,5 @@
+import type { Metadata } from "next";
+import { LockKeyhole } from "lucide-react";
+import { InfoPage } from "@/components/storefront/info-page";
+export const metadata: Metadata = { title: "Privacy policy" };
+export default function PrivacyPage() { return <InfoPage eyebrow="Legal" title="Privacy policy" intro="A plain-language placeholder for the business-approved K & LL Traders privacy policy." icon={LockKeyhole}><h2>Information we use</h2><p>Account, delivery and order information is used to provide the shopping service you request. The exact retention and processing terms must be supplied and approved by the business.</p><h2>Authentication and security</h2><p>Secure tokens and authorization rules belong to the backend. This frontend does not treat local browser storage as secure authentication storage.</p><h2>Your choices</h2><p>Contact K & LL Traders to request information about your account or data once the production support process is confirmed.</p><p><strong>TODO(legal):</strong> Replace this placeholder with counsel-approved policy text before launch.</p></InfoPage>; }

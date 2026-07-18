@@ -1,0 +1,4 @@
+import Link from "next/link";
+import { ArrowRight, Percent } from "lucide-react";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
+export default function SettingsPage() { return <div><AdminPageHeader title="Settings" description="Storewide configuration backed by confirmed admin endpoints." /><Link href="/admin/settings/tax" className="panel flex max-w-xl items-center gap-4 p-5 transition hover:-translate-y-0.5 hover:shadow-card-hover"><span className="flex size-12 items-center justify-center rounded-2xl bg-soft/50 text-brand"><Percent className="size-5" /></span><span className="flex-1"><span className="block font-black text-brand">Tax rate</span><span className="mt-1 block text-xs text-ink-muted">View or update the current backend tax setting.</span></span><ArrowRight className="size-5 text-brand" /></Link></div>; }

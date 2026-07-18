@@ -1,64 +1,199 @@
 import type { Address, Category, Order, Product, UserSummary } from "@/types";
 
-export const categories: Category[] = [
-  { name: "Televisions", slug: "televisions", description: "Cinematic screens for every room", icon: "tv" },
-  { name: "Refrigerators", slug: "refrigerators", description: "Freshness designed around daily life", icon: "fridge" },
-  { name: "Washing machines", slug: "washing-machines", description: "Reliable care for every load", icon: "washer" },
-  { name: "Air conditioners", slug: "air-conditioners", description: "Comfort with efficient cooling", icon: "air" },
-  { name: "Kitchen appliances", slug: "kitchen-appliances", description: "Smart essentials for faster meals", icon: "kitchen" },
-  { name: "Audio", slug: "audio", description: "Clear, room-filling sound", icon: "audio" },
+type StockSeed = {
+  category: string;
+  slug: string;
+  description: string;
+  visual: Product["visual"];
+  items: Array<readonly [name: string, quantity: number | null, visual?: Product["visual"]]>;
+};
+
+// Hardcoded from STOCK SHOP.pdf. Repeated rows in the report are represented once.
+// null means the source quantity was blank or invalid and must be confirmed.
+const stockGroups: StockSeed[] = [
+  {
+    category: "Televisions & Audio", slug: "televisions-audio", visual: "tv",
+    description: "Televisions, radios and speakers currently listed by the shop.",
+    items: [
+      ['32" Unic TV', 26], ['55" Google TV', 1], ['43" Google TV', 3], ['32" Google TV', 2],
+      ["Radio – Unic", 13, "audio"], ["Speaker SIN-BT5-69", 2, "audio"], ["Speaker SIN-PSY-618", 3, "audio"],
+    ],
+  },
+  {
+    category: "Home & Kitchen Appliances", slug: "home-kitchen-appliances", visual: "kitchen",
+    description: "Everyday small appliances and useful products for the home.",
+    items: [
+      ["Hand Mixer", 3], ["Pressure Cooker", 3], ["Pressure Cooker 5L", 5], ["Toaster – Singer", 3],
+      ["Pop-up Toaster", 3], ["Blender", 3], ["Grinder – Sisil", 3], ["Grinder – Singer", 3],
+      ["Coconut Scraper", 1], ["Kettle KA-PRISMA 17-31", 13], ["Wall Clock", 4, "clock"],
+    ],
+  },
+  {
+    category: "Rice Cookers", slug: "rice-cookers", visual: "kitchen",
+    description: "Unic and Singer rice cookers in a range of household capacities.",
+    items: [
+      ["Rice Cooker 2.8L – Unic", 3], ["Rice Cooker 1.8L – Unic", 3], ["Rice Cooker 1.5L – Unic", 2],
+      ["Rice Cooker 4.5L – Unic", 2], ["Rice Cooker 2.8L – Singer", 5], ["Rice Cooker 1.0L – Singer", 1],
+    ],
+  },
+  {
+    category: "Ovens & Microwaves", slug: "ovens-microwaves", visual: "kitchen",
+    description: "Ovens and microwave models included in the current stock report.",
+    items: [
+      ["1kg Oven", 2], ["34L Oven", 3], ["1800W Oven", 2], ["Microwave SMW 823AY7", 1],
+      ["Microwave SMW 929 AS3", 1], ["Microwave SMW720CGN", 1],
+    ],
+  },
+  {
+    category: "Refrigerators & Freezers", slug: "refrigerators-freezers", visual: "fridge",
+    description: "Refrigerators, freezers and cold-storage equipment listed by the shop.",
+    items: [
+      ["IN P.R.C Freezer", 2], ["SL-157 GI Freezer", 2], ["SDF-336 GI Freezer", 1], ["SL-ECO 72-R1 Freezer", 2],
+      ["Chest Freezer", 1], ["Glass Door SL-ECO-245-TG", 1], ["Samsung Refrigerator", 1],
+      ["SL-ECO-245 Refrigerator", 1], ["SL-XLS 215 BC", 1], ["Eco-252 WR SV Refrigerator", 1],
+      ["Ice Maker", 1, "kitchen"],
+    ],
+  },
+  {
+    category: "Fans", slug: "fans", visual: "fan",
+    description: "Household and industrial fan stock.",
+    items: [["Ceiling Fan", 3], ["Ceiling Fan – Industrial", 3], ["Pedestal Fan", 12]],
+  },
+  {
+    category: "Shower Heaters", slug: "shower-heaters", visual: "heater",
+    description: "Shower heater models in the reported inventory.",
+    items: [["Singer Shower Heater", 4], ["Midea Shower Heater", 1]],
+  },
+  {
+    category: "Washing & Industrial Machines", slug: "washing-industrial-machines", visual: "washer",
+    description: "Washing machines and industrial sewing equipment.",
+    items: [
+      ["Samsung Washing Machine", 1], ["SWM-MAE 120 Automatic W/M", 1], ["SWM-SAR 6", 5],
+      ["SWM-FAR 75 T-WR", 3], ["MC-15N1", 1], ["Zoje Machine", 1, "sewing"],
+      ["Overlock Sewing Machine", 1, "sewing"],
+    ],
+  },
+  {
+    category: "Pumps & Motors", slug: "pumps-motors", visual: "pump",
+    description: "Pumps, motors and supporting machinery included in the report.",
+    items: [
+      ["Compressor", 2], ["Singer Motor/Pump 0.5 HP", 5], ["Singer Motor/Pump 0.75 HP", 6],
+      ["Singer Motor/Pump 1 HP", 3], ["Singer Motor/Pump 3 HP", 1], ["Singer Pressure Pump 0.5", 2],
+      ["Singer Pressure Pump 0.75", 1],
+    ],
+  },
+  {
+    category: "Air Conditioning", slug: "air-conditioning", visual: "air",
+    description: "Singer and Sisil indoor, outdoor and installation stock.",
+    items: [
+      ["Singer Inverter SAS 12 TCNR Indoor", 2], ["Singer Inverter SAS 18 TCNR Indoor", 1],
+      ["Singer Inverter SAS 12 TCNR Outdoor", 3], ["Sisil Inverter SAS 18 TCNR Indoor", 2],
+      ["Sisil Inverter SAS 18 TCNR Outdoor", 2], ["Non-Inverter SAS 12 TCNR Indoor", 3],
+      ["Non-Inverter SAS 18 TCNR Indoor", 4], ["Non-Inverter SAS 12 TCNR Outdoor", 3],
+      ["Non-Inverter SAS 18 TCNR Outdoor", 4], ["Singer AC Bracket", 3, "parts"],
+    ],
+  },
+  {
+    category: "Presser Feet & Attachments", slug: "presser-feet-attachments", visual: "sewing",
+    description: "Presser feet and attachments for sewing-machine work.",
+    items: [
+      ["Presser Foot – Susei", 30], ["Presser Foot P952", 8], ["Presser Foot (pcs)", 14],
+      ["Presser Foot 5518N", 9], ["Presser Foot T35", 12], ["Presser Foot T36", 4],
+      ["Zig Zag Presser Foot", 31], ["Presser Foot P351", 2], ["Presser Foot P36N", 2],
+      ["Rolled Hem Presser", 2], ["Buttonholer", 2],
+    ],
+  },
+  {
+    category: "Needles & Needle Parts", slug: "needles-needle-parts", visual: "sewing",
+    description: "Needles and related sewing-machine components.",
+    items: [["Needles", 570], ["Needle Bar Crank", 5], ["Needle Clamp", 5], ["Needle Bar Connecting Link", 5]],
+  },
+  {
+    category: "Core Sewing Machine Parts", slug: "core-sewing-machine-parts", visual: "parts",
+    description: "Bobbins, hooks, plates, gears and other core sewing-machine parts.",
+    items: [
+      ["Feed Dog (combined)", 44], ["Shuttle – Zoje", 7], ["Shuttle – Singer", 14], ["Shuttle Hook", 3],
+      ["Hook (general)", 5], ["Bobbin Case", 12], ["Zig Zag Bobbins", 71], ["Zoje Bobbins", 70],
+      ["Bobbin Winder", 5], ["Plate", 79], ["S.B. Machine Plate", 3], ["Thread Assembly", 15],
+      ["Tension Assembly", 8], ["Presser Bar", 5], ["Bevel Gear", 16], ["Gear Wheel", null],
+      ["Hinges", 6], ["Sewing Parts (general)", 16],
+    ],
+  },
+  {
+    category: "Belts", slug: "belts", visual: "parts",
+    description: "Replacement belts listed for sewing-machine servicing.",
+    items: [["M Belt", 6], ["T Belt", 15], ["Z.M.M Belt", 27], ["L Belts", 2]],
+  },
+  {
+    category: "Tools", slug: "tools", visual: "tool",
+    description: "Workshop and sewing tools in the shop inventory.",
+    items: [["Scissors", 10], ["Thread Scissors", 11], ["Screwdriver", 13]],
+  },
+  {
+    category: "Electrical & Motor Components", slug: "electrical-motor-components", visual: "parts",
+    description: "Electrical and motor components for equipment servicing.",
+    items: [
+      ["Sewing Machine Motor & Controller", 2, "pump"], ["CBB61 Capacitor", 10],
+      ["P.B Switch", 4], ["TAHE-LE Unit", 3],
+    ],
+  },
+  {
+    category: "Oils & Consumables", slug: "oils-consumables", visual: "oil",
+    description: "Machine oils and consumables currently listed by the shop.",
+    items: [["Singer Oil", 4], ["Zoje Oil", 9]],
+  },
+  {
+    category: "Miscellaneous Parts", slug: "miscellaneous-parts", visual: "parts",
+    description: "Additional parts and components recorded in the stock report.",
+    items: [
+      ["Radar", 22], ["CREAT X", 4], ["Maxi", 5], ["Stainless Part", 5], ["Metal Rod", 5],
+      ["M.S Guide", 4], ["W.P Component", 1], ["F.P with Tension Dial", 6], ["F.D.D Cam", 5],
+    ],
+  },
 ];
 
-export const products: Product[] = [
-  {
-    id: "KLL-TV-001", slug: "vision-pro-55-4k-smart-tv", name: "VisionPro 55\" 4K Smart Television",
-    category: "Televisions", categorySlug: "televisions", description: "A vivid 4K display with a streamlined smart TV experience for movies, sport and everyday viewing.",
-    price: 149990, originalPrice: 169990, stock: "in-stock", warranty: "2 year warranty", badge: "Best seller", visual: "tv",
-    specifications: [{ label: "Display", value: "55-inch 4K UHD" }, { label: "Connectivity", value: "Wi-Fi, HDMI, USB" }, { label: "Audio", value: "Dolby Audio" }, { label: "Energy rating", value: "4 star" }],
-  },
-  {
-    id: "KLL-RF-102", slug: "frostline-340l-inverter-refrigerator", name: "FrostLine 340L Inverter Refrigerator",
-    category: "Refrigerators", categorySlug: "refrigerators", description: "Quiet inverter cooling and flexible storage that keeps family groceries organized and fresh.",
-    price: 189990, originalPrice: 205000, stock: "low-stock", warranty: "10 year compressor warranty", badge: "Offer", visual: "fridge",
-    specifications: [{ label: "Capacity", value: "340 litres" }, { label: "Cooling", value: "No frost inverter" }, { label: "Finish", value: "Steel blue" }, { label: "Shelves", value: "Toughened glass" }],
-  },
-  {
-    id: "KLL-WM-214", slug: "purewash-8kg-front-load-washer", name: "PureWash 8kg Front Load Washer",
-    category: "Washing machines", categorySlug: "washing-machines", description: "An efficient front loader with thoughtful wash programs and a gentle, quiet drum.",
-    price: 129500, stock: "in-stock", warranty: "2 year warranty", badge: "New", visual: "washer",
-    specifications: [{ label: "Capacity", value: "8 kg" }, { label: "Motor", value: "Inverter direct drive" }, { label: "Programs", value: "14 wash modes" }, { label: "Spin speed", value: "1200 RPM" }],
-  },
-  {
-    id: "KLL-AC-318", slug: "breezeflow-12000-btu-inverter-ac", name: "BreezeFlow 12,000 BTU Inverter AC",
-    category: "Air conditioners", categorySlug: "air-conditioners", description: "Fast, efficient room cooling with sleep mode and low-noise operation.",
-    price: 164990, stock: "in-stock", warranty: "5 year compressor warranty", visual: "air",
-    specifications: [{ label: "Capacity", value: "12,000 BTU" }, { label: "Technology", value: "DC inverter" }, { label: "Modes", value: "Cool, dry, fan, sleep" }, { label: "Filter", value: "Washable dust filter" }],
-  },
-  {
-    id: "KLL-KT-404", slug: "quickchef-25l-digital-microwave", name: "QuickChef 25L Digital Microwave",
-    category: "Kitchen appliances", categorySlug: "kitchen-appliances", description: "Everyday cooking made simpler with intuitive controls and useful presets.",
-    price: 44990, originalPrice: 49990, stock: "in-stock", warranty: "1 year warranty", badge: "Offer", visual: "kitchen",
-    specifications: [{ label: "Capacity", value: "25 litres" }, { label: "Power", value: "900 W" }, { label: "Controls", value: "Digital touch" }, { label: "Presets", value: "8 auto menus" }],
-  },
-  {
-    id: "KLL-AU-510", slug: "soundarc-wireless-soundbar", name: "SoundArc Wireless Soundbar",
-    category: "Audio", categorySlug: "audio", description: "A compact soundbar that brings clearer dialogue and fuller sound to your television.",
-    price: 32990, stock: "low-stock", warranty: "1 year warranty", visual: "audio",
-    specifications: [{ label: "Output", value: "120 W" }, { label: "Connectivity", value: "Bluetooth, HDMI ARC" }, { label: "Channels", value: "2.1 channel" }, { label: "Mounting", value: "Wall mount ready" }],
-  },
-  {
-    id: "KLL-PH-612", slug: "nova-x5-5g-smartphone", name: "Nova X5 5G Smartphone 256GB",
-    category: "Mobile", categorySlug: "mobile", description: "A polished everyday phone with a bright display, dependable battery and generous storage.",
-    price: 89990, stock: "in-stock", warranty: "1 year warranty", badge: "New", visual: "phone",
-    specifications: [{ label: "Storage", value: "256 GB" }, { label: "Memory", value: "8 GB RAM" }, { label: "Display", value: "6.6-inch AMOLED" }, { label: "Network", value: "5G dual SIM" }],
-  },
-  {
-    id: "KLL-FN-710", slug: "aircircle-pedestal-fan", name: "AirCircle 16\" Pedestal Fan",
-    category: "Home appliances", categorySlug: "home-appliances", description: "Quiet air movement with simple controls and adjustable height.",
-    price: 15990, stock: "in-stock", warranty: "1 year warranty", visual: "fan",
-    specifications: [{ label: "Blade size", value: "16 inch" }, { label: "Speeds", value: "3" }, { label: "Timer", value: "Up to 2 hours" }, { label: "Oscillation", value: "Wide-angle" }],
-  },
-];
+function stockLevel(quantity: number | null): Product["stock"] {
+  if (quantity === null) return "stock-unknown";
+  if (quantity === 0) return "out-of-stock";
+  if (quantity <= 5) return "low-stock";
+  return "in-stock";
+}
+
+function slugify(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+export const categories: Category[] = stockGroups.map((group) => ({
+  name: group.category,
+  slug: group.slug,
+  description: group.description,
+  icon: group.visual,
+}));
+
+export const products: Product[] = stockGroups.flatMap((group, groupIndex) =>
+  group.items.map(([name, quantity, visual], itemIndex) => {
+    const id = `KLL-${group.slug.slice(0, 3).toUpperCase()}-${String(groupIndex + 1).padStart(2, "0")}${String(itemIndex + 1).padStart(2, "0")}`;
+    return {
+      id,
+      slug: `${slugify(name)}-${id.toLowerCase()}`,
+      name,
+      category: group.category,
+      categorySlug: group.slug,
+      description: `${name} is listed in the current K & LL Traders shop inventory under ${group.category}. Contact the shop to confirm price and product details.`,
+      price: null,
+      stockQuantity: quantity,
+      stock: stockLevel(quantity),
+      warranty: "Warranty details to confirm",
+      visual: visual ?? group.visual,
+      specifications: [
+        { label: "Category", value: group.category },
+        { label: "Reported stock", value: quantity === null ? "Confirm with shop" : `${quantity} unit${quantity === 1 ? "" : "s"}` },
+        { label: "Price", value: "Contact shop" },
+        { label: "Source", value: "STOCK SHOP.pdf" },
+      ],
+    } satisfies Product;
+  }),
+);
 
 export const mockOrders: Order[] = [
   { id: "KLL-2026-1048", date: "12 July 2026", status: "shipped", itemCount: 2, total: 194980, paymentMethod: "Card on delivery" },

@@ -1,0 +1,5 @@
+import type { Metadata } from "next";
+import { FileText } from "lucide-react";
+import { InfoPage } from "@/components/storefront/info-page";
+export const metadata: Metadata = { title: "Terms and conditions" };
+export default function TermsPage() { return <InfoPage eyebrow="Legal" title="Terms and conditions" intro="A structured placeholder for business-approved purchase and website terms." icon={FileText}><h2>Product information</h2><p>Product details are presented carefully, but confirmed stock, price and order totals are returned by the backend when you check out.</p><h2>Orders and payment</h2><p>An order is not final merely because a frontend screen is displayed. Confirmation depends on successful backend processing and the applicable payment workflow.</p><h2>Returns, delivery and warranty</h2><p>These subjects require the approved K & LL Traders policies and applicable Sri Lankan law.</p><p><strong>TODO(legal):</strong> Replace this placeholder with approved terms before launch.</p></InfoPage>; }

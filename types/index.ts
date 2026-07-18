@@ -1,5 +1,5 @@
 export type ItemStatus = "active" | "draft" | "deleted";
-export type StockLevel = "in-stock" | "low-stock" | "out-of-stock";
+export type StockLevel = "in-stock" | "low-stock" | "out-of-stock" | "stock-unknown";
 export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "cancelled";
 export type UserRole = "customer" | "admin";
 
@@ -10,12 +10,13 @@ export interface Product {
   category: string;
   categorySlug: string;
   description: string;
-  price: number;
-  originalPrice?: number;
+  price: number | null;
+  originalPrice?: number | null;
+  stockQuantity: number | null;
   stock: StockLevel;
   warranty: string;
   badge?: "New" | "Offer" | "Best seller";
-  visual: "tv" | "fridge" | "washer" | "air" | "kitchen" | "audio" | "phone" | "fan";
+  visual: "tv" | "fridge" | "washer" | "air" | "kitchen" | "audio" | "phone" | "fan" | "sewing" | "parts" | "tool" | "oil" | "pump" | "heater" | "clock";
   specifications: Array<{ label: string; value: string }>;
 }
 

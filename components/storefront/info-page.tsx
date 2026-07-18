@@ -1,0 +1,3 @@
+import type { LucideIcon } from "lucide-react";
+
+export function InfoPage({ eyebrow, title, intro, icon: Icon, children }: { eyebrow: string; title: string; intro: string; icon: LucideIcon; children: React.ReactNode }) { return <main id="main-content" className="shell py-7 sm:py-10"><section className="overflow-hidden rounded-[2rem] bg-brand p-7 text-white sm:p-12"><Icon className="size-8 text-soft" /><p className="mt-6 text-xs font-black uppercase tracking-[.18em] text-soft">{eyebrow}</p><h1 className="mt-3 max-w-3xl text-4xl font-black tracking-tight sm:text-5xl">{title}</h1><p className="mt-5 max-w-2xl text-base leading-7 text-white/72">{intro}</p></section><section className="prose-kll mx-auto max-w-4xl py-10 sm:py-14">{children}</section></main>; }

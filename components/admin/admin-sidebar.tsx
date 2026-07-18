@@ -1,0 +1,9 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { Boxes, LayoutDashboard, PackageSearch, Settings, UploadCloud, UsersRound } from "lucide-react";
+import { usePathname } from "next/navigation";
+
+const links = [{ href: "/admin", label: "Dashboard", icon: LayoutDashboard }, { href: "/admin/items", label: "Items", icon: Boxes }, { href: "/admin/orders", label: "Orders", icon: PackageSearch }, { href: "/admin/users", label: "Users", icon: UsersRound }, { href: "/admin/uploads", label: "Uploads", icon: UploadCloud }, { href: "/admin/settings", label: "Settings", icon: Settings }];
+export function AdminSidebar() { const pathname = usePathname(); return <aside className="hidden min-h-screen w-64 shrink-0 bg-brand p-4 text-white lg:fixed lg:inset-y-0 lg:flex lg:flex-col"><Link href="/" className="rounded-2xl bg-white p-3"><Image src="/images/kl-logo-transparent.png" alt="K & LL Traders" width={1095} height={321} className="h-auto w-full" /></Link><p className="mb-4 mt-7 px-3 text-[10px] font-black uppercase tracking-[.2em] text-soft">Administration</p><nav className="space-y-1" aria-label="Admin navigation">{links.map(({ href, label, icon: Icon }) => { const active = href === "/admin" ? pathname === href : pathname.startsWith(href); return <Link href={href} key={href} aria-current={active ? "page" : undefined} className={`flex min-h-11 items-center gap-3 rounded-xl px-4 text-sm font-bold transition ${active ? "bg-white text-brand" : "text-white/72 hover:bg-white/10 hover:text-white"}`}><Icon className="size-4.5" />{label}</Link>; })}</nav><div className="mt-auto rounded-2xl border border-white/10 bg-white/5 p-4"><p className="text-xs font-black">Backend integration</p><p className="mt-2 text-xs leading-5 text-white/55">Mock mode is active. Destructive actions remain UI-only.</p></div></aside>; }

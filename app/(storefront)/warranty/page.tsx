@@ -1,0 +1,5 @@
+import type { Metadata } from "next";
+import { ShieldCheck } from "lucide-react";
+import { InfoPage } from "@/components/storefront/info-page";
+export const metadata: Metadata = { title: "Warranty information" };
+export default function WarrantyPage() { return <InfoPage eyebrow="Warranty support" title="Clear coverage, useful support." intro="Warranty duration and coverage can differ by brand and product. Always review the confirmed product documentation." icon={ShieldCheck}><h2>Before you buy</h2><p>Each product page shows a warranty summary to help comparison. The warranty card, invoice and manufacturer terms remain the authoritative documents.</p><h2>If you need assistance</h2><p>Keep your invoice and product serial number ready, then contact our team by phone or WhatsApp. We will help identify the appropriate next step.</p><h2>What is not assumed</h2><p>This frontend does not invent warranty eligibility, replacement rules or service-center decisions. Those depend on the confirmed policy and backend records.</p></InfoPage>; }

@@ -1,0 +1,5 @@
+import type { Metadata } from "next";
+import { Truck } from "lucide-react";
+import { InfoPage } from "@/components/storefront/info-page";
+export const metadata: Metadata = { title: "Delivery information" };
+export default function DeliveryInfoPage() { return <InfoPage eyebrow="Delivery guide" title="From our store to your door." intro="Delivery availability, dates and final fees are confirmed for your address during checkout." icon={Truck}><h2>How delivery works</h2><ol><li>Choose your products and enter a complete delivery address.</li><li>The checkout service returns the available delivery options and authoritative fee.</li><li>Our team confirms the date and any access requirements with you.</li></ol><h2>Large appliances</h2><p>For refrigerators, washing machines and other large products, please tell our team about stairs, narrow access or special placement needs before delivery.</p><h2>Important note</h2><p>Delivery times shown in the interface are estimates until the backend and operations team confirm them.</p></InfoPage>; }
