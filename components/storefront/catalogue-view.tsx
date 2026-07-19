@@ -3,8 +3,7 @@
 import { SlidersHorizontal } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { ProductGrid } from "./product-grid";
-import { categories } from "@/mocks/data";
-import type { Product } from "@/types";
+import type { Product, Category } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -44,9 +43,10 @@ type FiltersProps = {
   setSelected: (categories: string[]) => void;
   inStockOnly: boolean;
   setInStockOnly: (value: boolean) => void;
+  categories: Category[];
 };
 
-function Filters({ selected, setSelected, inStockOnly, setInStockOnly }: FiltersProps) {
+function Filters({ selected, setSelected, inStockOnly, setInStockOnly, categories }: FiltersProps) {
   const options = categories.map((category) => category.name);
   return <div>
     <div className="flex items-center justify-between"><h2 className="font-black text-brand">Filters</h2><Button type="button" variant="ghost" size="xs" onClick={() => { setSelected([]); setInStockOnly(false); }}>Clear all</Button></div>
@@ -56,7 +56,7 @@ function Filters({ selected, setSelected, inStockOnly, setInStockOnly }: Filters
   </div>;
 }
 
-export function CatalogueView({ initialProducts }: { initialProducts: Product[] }) {
+export function CatalogueView({ initialProducts, categories = [] }: { initialProducts: Product[], categories?: Category[] }) {
   const [selected, setSelected] = useState<string[]>([]);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sort, setSort] = useState("featured");
@@ -80,7 +80,7 @@ export function CatalogueView({ initialProducts }: { initialProducts: Product[] 
 
   const updateSelected = (value: string[]) => { setSelected(value); setPage(1); };
   const updateInStockOnly = (value: boolean) => { setInStockOnly(value); setPage(1); };
-  const filterProps = { selected, setSelected: updateSelected, inStockOnly, setInStockOnly: updateInStockOnly };
+  const filterProps = { selected, setSelected: updateSelected, inStockOnly, setInStockOnly: updateInStockOnly, categories };
 
   function changePage(nextPage: number) {
     setPage(Math.min(Math.max(nextPage, 1), totalPages));

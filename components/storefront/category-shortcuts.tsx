@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { categories } from "@/mocks/data";
 import { ProductIcon } from "@/components/product/product-visual";
 
-export function CategoryShortcuts() {
+export function CategoryShortcuts({ categories = [] }: { categories?: any[] }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
       {categories.map((category) => (

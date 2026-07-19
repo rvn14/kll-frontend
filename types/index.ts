@@ -16,15 +16,16 @@ export interface Product {
   stock: StockLevel;
   warranty: string;
   badge?: "New" | "Offer" | "Best seller";
-  visual: "tv" | "fridge" | "washer" | "air" | "kitchen" | "audio" | "phone" | "fan" | "sewing" | "parts" | "tool" | "oil" | "pump" | "heater" | "clock";
+  visual: string;
   specifications: Array<{ label: string; value: string }>;
 }
 
 export interface Category {
+  id?: number;
   name: string;
   slug: string;
   description: string;
-  icon: Product["visual"];
+  icon: string;
 }
 
 export interface CartLine {
