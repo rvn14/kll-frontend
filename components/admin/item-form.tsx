@@ -17,7 +17,8 @@ export function ItemForm({ product }: { product?: Product }) {
         description: formData.get("description") || "",
         price: Number(formData.get("price")) || 0,
         stock_quantity: Number(formData.get("stock_quantity")) || 0,
-        category_id: 1, // hardcoded for now or fetched
+        category_id: Number(formData.get("category_id")) || 1,
+        brand_id: Number(formData.get("brand_id")),
         warranty_details: formData.get("warranty_details") || "",
       };
       
@@ -55,6 +56,10 @@ export function ItemForm({ product }: { product?: Product }) {
           <label>
             <span className="field-label">Category (ID)</span>
             <input name="category_id" className="field" type="number" defaultValue={1} required />
+          </label>
+          <label>
+            <span className="field-label">Brand (ID)</span>
+            <input name="brand_id" className="field" type="number" defaultValue={1} required />
           </label>
           <label>
             <span className="field-label">Price</span>
