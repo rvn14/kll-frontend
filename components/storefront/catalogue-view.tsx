@@ -21,7 +21,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-const ITEMS_PER_PAGE = 16;
+const ITEMS_PER_PAGE = 12;
 
 function getPaginationItems(currentPage: number, totalPages: number) {
   if (totalPages <= 5) return Array.from({ length: totalPages }, (_, index) => index + 1);

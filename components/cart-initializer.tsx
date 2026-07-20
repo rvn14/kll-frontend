@@ -1,13 +1,21 @@
 "use client";
 import { useEffect } from "react";
 import { useCartStore } from "@/stores/cart-store";
+import { useAuthStore } from "@/stores/auth-store";
 import { cartService } from "@/services/cart.service";
 import type { CartLine } from "@/types";
 
 export function CartInitializer() {
   const setLines = useCartStore((state) => state.setLines);
+  const { isAuthenticated, isLoading } = useAuthStore();
 
   useEffect(() => {
+    // Don't fetch cart if still loading auth or not authenticated
+    if (isLoading || !isAuthenticated) {
+      setLines([]);
+      return;
+    }
+
     cartService.get().then((cart: any) => {
       // Map backend cart format to frontend CartLine array
       if (cart && cart.items) {
@@ -32,7 +40,7 @@ export function CartInitializer() {
       console.error("Failed to load cart", err);
       setLines([]);
     });
-  }, [setLines]);
+  }, [setLines, isAuthenticated, isLoading]);
 
   return null;
 }

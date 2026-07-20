@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { CartInitializer } from "@/components/cart-initializer";
+import { AuthInitializer } from "@/components/auth-initializer";
 
 function SmoothScroll({ children }: { children: React.ReactNode }) {
   const [reduceMotion, setReduceMotion] = useState(false);
@@ -32,6 +33,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <TooltipProvider>
         <SmoothScroll>{children}</SmoothScroll>
         <Toaster richColors position="top-right" />
+        <AuthInitializer />
         <CartInitializer />
       </TooltipProvider>
     </QueryClientProvider>

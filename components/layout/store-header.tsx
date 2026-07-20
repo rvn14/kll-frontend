@@ -1,9 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CircleUserRound, Headphones, Phone, Truck } from "lucide-react";
+import { Headphones, Phone, Truck } from "lucide-react";
 import { CartIndicator } from "./cart-indicator";
 import { MobileMenu } from "./mobile-menu";
 import { SearchBar } from "./search-bar";
+import { HeaderAuthButton } from "./header-auth-button";
+import { CategoryNav } from "./category-nav";
 import { getCategoriesServer } from "@/services/categories.server.service";
 import { getItemsPaginatedServer } from "@/services/items.server.service";
 
@@ -30,20 +32,12 @@ export async function StoreHeader() {
         <div className="hidden flex-1 justify-center lg:flex"><SearchBar suggestions={searchSuggestions} /></div>
         <div className="ml-auto flex items-center gap-1">
           <Link href="/contact" className="hidden min-h-11 items-center gap-2 rounded-full px-3 text-brand hover:bg-soft/55 xl:flex"><Headphones className="size-5" /><span className="text-sm font-bold">Help</span></Link>
-          <Link href="/account" className="flex min-h-11 items-center gap-2 rounded-full px-2 text-brand hover:bg-soft/55 sm:px-3" aria-label="My account"><CircleUserRound className="size-5" /><span className="hidden text-sm font-bold xl:inline">Account</span></Link>
+          <HeaderAuthButton />
           <CartIndicator mobile />
         </div>
       </div>
       <div className="shell pb-3 lg:hidden"><SearchBar compact suggestions={searchSuggestions} /></div>
-      <nav className="hidden border-t border-border bg-white lg:block" aria-label="Product categories">
-        <div className="shell flex h-12 items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-1 overflow-hidden">
-            <Link href="/shop" className="category-link font-black">Shop all</Link>
-            {categories.slice(0, 7).map((category) => <Link href={`/category/${category.slug}`} key={category.slug} className="category-link">{category.name}</Link>)}
-          </div>
-          <Link href="/offers" className="shrink-0 rounded-full bg-soft px-4 py-2 text-sm font-black text-brand hover:bg-soft-strong">Offers</Link>
-        </div>
-      </nav>
+      <CategoryNav categories={categories} />
     </header>
   );
 }

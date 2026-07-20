@@ -3,9 +3,15 @@
 import Link from "next/link";
 import { ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
+import { useAuthStore } from "@/stores/auth-store";
 
 export function CartIndicator({ mobile = false }: { mobile?: boolean }) {
   const count = useCartStore((state) => state.lines.reduce((total, line) => total + line.quantity, 0));
+  const { isAuthenticated } = useAuthStore();
+
+  // Hide cart indicator for non-authenticated users
+  if (!isAuthenticated) return null;
+
   return (
     <Link href="/cart" className={`relative flex min-h-11 items-center justify-center gap-2 rounded-full text-brand transition hover:bg-soft/55 ${mobile ? "size-11" : "px-3"}`} aria-label={`Cart with ${count} items`}>
       <ShoppingBag className="size-5" />

@@ -21,7 +21,7 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
   const isFormData = body instanceof FormData;
   const response = await fetch(buildUrl(path, query), {
     ...requestOptions,
-    // TODO(api-auth): Add the confirmed authorization header and refresh strategy here.
+    credentials: "include",
     headers: { ...(isFormData ? {} : { "Content-Type": "application/json" }), ...headers },
     body: body === undefined ? undefined : isFormData ? body : JSON.stringify(body),
   });
