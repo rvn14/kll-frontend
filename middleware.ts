@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
     
     // Proxy other requests to the backend
     const token = request.cookies.get('access_token')?.value;
-    const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000';
     
     // Create the target URL by appending the path and query string to the backend URL
     const targetUrl = new URL(request.nextUrl.pathname + request.nextUrl.search, backendUrl);
