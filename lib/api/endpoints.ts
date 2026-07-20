@@ -8,6 +8,9 @@ export const apiEndpoints = {
   categories: {
     list: "/api/v1/categories",
   },
+  brands: {
+    search: "/api/v1/brands/search",
+  },
   uploads: "/api/v1/uploads",
   auth: {
     register: "/api/v1/auth/register",

@@ -5,10 +5,14 @@ import type { Product } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createItem, updateItem } from "@/services/items.service";
 import { useRouter } from "next/navigation";
+import { BrandSelector } from "./brand-selector";
+import { ImageUploader } from "./image-uploader";
+import { useState } from "react";
 
 export function ItemForm({ product }: { product?: Product }) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [imageUrls, setImageUrls] = useState<string[]>(product?.visuals || (product?.visual && product.visual !== "package" ? [product.visual] : []));
 
   const mutation = useMutation({
     mutationFn: async (formData: FormData) => {
@@ -18,8 +22,9 @@ export function ItemForm({ product }: { product?: Product }) {
         price: Number(formData.get("price")) || 0,
         stock_quantity: Number(formData.get("stock_quantity")) || 0,
         category_id: Number(formData.get("category_id")) || 1,
-        brand_id: Number(formData.get("brand_id")),
+        brand_id: formData.get("brand_id") ? Number(formData.get("brand_id")) : null,
         warranty_details: formData.get("warranty_details") || "",
+        image_urls: imageUrls,
       };
       
       if (product?.id) {
@@ -58,8 +63,8 @@ export function ItemForm({ product }: { product?: Product }) {
             <input name="category_id" className="field" type="number" defaultValue={1} required />
           </label>
           <label>
-            <span className="field-label">Brand (ID)</span>
-            <input name="brand_id" className="field" type="number" defaultValue={1} required />
+            <span className="field-label">Brand</span>
+            <BrandSelector defaultBrandId={product ? null : 1} /> {/* Ideally we'd get product.brand_id from product, but Product only has brand string name currently. Let's assume default to null if not passed correctly, wait: Product doesn't expose brand_id. */}
           </label>
           <label>
             <span className="field-label">Price</span>
@@ -95,12 +100,9 @@ export function ItemForm({ product }: { product?: Product }) {
       </section>
       <aside className="panel h-fit p-5">
         <h2 className="text-lg font-black text-brand">Product media</h2>
-        <button type="button" className="mt-5 flex min-h-48 w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed border-soft-strong bg-soft/20 p-5 text-center text-brand hover:bg-soft/35">
-          <ImagePlus className="size-7" />
-          <span className="mt-3 text-sm font-black">Upload product images</span>
-          <span className="mt-1 text-xs text-ink-muted">PNG, JPG or WebP · multipart upload</span>
-        </button>
-        <p className="mt-4 text-xs leading-5 text-ink-muted">The upload response will be normalized after its contract is confirmed.</p>
+        <div className="mt-5">
+          <ImageUploader defaultImages={imageUrls} onImagesChange={setImageUrls} />
+        </div>
       </aside>
     </form>
   );

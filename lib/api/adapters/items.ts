@@ -12,7 +12,8 @@ function slugify(text: string) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function adaptItemResponse(payload: any): Product {
   // Map backend ItemResponse to frontend Product type
-  const firstImage = payload.images && payload.images.length > 0 ? payload.images[0].image_url : null;
+  const firstImage = payload.blobs && payload.blobs.length > 0 ? payload.blobs[0].image_blob_url : null;
+  const visuals = payload.blobs ? payload.blobs.map((b: any) => b.image_blob_url) : [];
   
   // Default to a visual category icon if no image
   const visual = firstImage ? firstImage : (payload.category?.name ? slugify(payload.category.name) : "package");
@@ -53,6 +54,8 @@ export function adaptItemResponse(payload: any): Product {
     name: payload.name,
     category: payload.category?.name || "Uncategorized",
     categorySlug: payload.category?.name ? slugify(payload.category.name) : "uncategorized",
+    brand: payload.brand?.name || "Others",
+    brandSlug: payload.brand?.name ? slugify(payload.brand.name) : "others",
     description: payload.description || "",
     price: payload.discount_price ?? payload.price ?? null,
     originalPrice: payload.discount_price ? payload.price : null,
@@ -61,6 +64,7 @@ export function adaptItemResponse(payload: any): Product {
     warranty: payload.warranty_details || "Standard Warranty",
     badge: payload.discount_price ? "Offer" : undefined,
     visual: visual,
+    visuals: visuals,
     specifications: specifications,
   };
 }
