@@ -3,8 +3,7 @@
 import { SlidersHorizontal } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { ProductGrid } from "./product-grid";
-import { categories } from "@/mocks/data";
-import type { Product } from "@/types";
+import type { Product, Category } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -42,29 +41,42 @@ function getPaginationItems(currentPage: number, totalPages: number) {
 type FiltersProps = {
   selected: string[];
   setSelected: (categories: string[]) => void;
+  selectedBrands: string[];
+  setSelectedBrands: (brands: string[]) => void;
   inStockOnly: boolean;
   setInStockOnly: (value: boolean) => void;
+  categories: Category[];
+  brands: string[];
 };
 
-function Filters({ selected, setSelected, inStockOnly, setInStockOnly }: FiltersProps) {
+function Filters({ selected, setSelected, selectedBrands, setSelectedBrands, inStockOnly, setInStockOnly, categories, brands }: FiltersProps) {
   const options = categories.map((category) => category.name);
   return <div>
-    <div className="flex items-center justify-between"><h2 className="font-black text-brand">Filters</h2><Button type="button" variant="ghost" size="xs" onClick={() => { setSelected([]); setInStockOnly(false); }}>Clear all</Button></div>
+    <div className="flex items-center justify-between"><h2 className="font-black text-brand">Filters</h2><Button type="button" variant="ghost" size="xs" onClick={() => { setSelected([]); setSelectedBrands([]); setInStockOnly(false); }}>Clear all</Button></div>
     <fieldset className="mt-6"><legend className="text-sm font-black text-brand">Category</legend><div className="mt-3 space-y-1">{options.map((option) => { const id = `category-${option.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`; return <div className="flex min-h-11 items-center gap-3 rounded-xl px-2 hover:bg-accent" key={option}><Checkbox id={id} checked={selected.includes(option)} onCheckedChange={(checked) => setSelected(checked === true ? [...selected, option] : selected.filter((item) => item !== option))} /><Label htmlFor={id} className="flex min-h-11 flex-1 cursor-pointer items-center text-sm font-semibold text-ink-muted">{option}</Label></div>; })}</div></fieldset>
     <Separator className="my-5" />
+    {brands.length > 0 && <><fieldset className="mt-6"><legend className="text-sm font-black text-brand">Brand</legend><div className="mt-3 space-y-1">{brands.map((option) => { const id = `brand-${option.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`; return <div className="flex min-h-11 items-center gap-3 rounded-xl px-2 hover:bg-accent" key={option}><Checkbox id={id} checked={selectedBrands.includes(option)} onCheckedChange={(checked) => setSelectedBrands(checked === true ? [...selectedBrands, option] : selectedBrands.filter((item) => item !== option))} /><Label htmlFor={id} className="flex min-h-11 flex-1 cursor-pointer items-center text-sm font-semibold text-ink-muted">{option}</Label></div>; })}</div></fieldset><Separator className="my-5" /></>}
     <div className="flex min-h-11 items-center gap-3 rounded-xl px-2"><Checkbox id="in-stock-only" checked={inStockOnly} onCheckedChange={(checked) => setInStockOnly(checked === true)} /><Label htmlFor="in-stock-only" className="flex min-h-11 flex-1 cursor-pointer items-center text-sm font-bold text-brand">In-stock products only</Label></div>
   </div>;
 }
 
-export function CatalogueView({ initialProducts }: { initialProducts: Product[] }) {
+export function CatalogueView({ initialProducts, categories = [] }: { initialProducts: Product[], categories?: Category[] }) {
   const [selected, setSelected] = useState<string[]>([]);
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sort, setSort] = useState("featured");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [page, setPage] = useState(1);
   const catalogueTop = useRef<HTMLDivElement>(null);
+
+  const availableBrands = useMemo(() => {
+    const brandsSet = new Set<string>();
+    initialProducts.forEach(p => p.brand && brandsSet.add(p.brand));
+    return Array.from(brandsSet).sort();
+  }, [initialProducts]);
+
   const visible = useMemo(() => {
-    const filtered = initialProducts.filter((product) => (!selected.length || selected.includes(product.category)) && (!inStockOnly || product.stock === "in-stock"));
+    const filtered = initialProducts.filter((product) => (!selected.length || selected.includes(product.category)) && (!selectedBrands.length || selectedBrands.includes(product.brand)) && (!inStockOnly || product.stock === "in-stock"));
     return [...filtered].sort((a, b) => {
       if (sort === "stock-high") return (b.stockQuantity ?? -1) - (a.stockQuantity ?? -1);
       if (sort === "stock-low") return (a.stockQuantity ?? Number.MAX_SAFE_INTEGER) - (b.stockQuantity ?? Number.MAX_SAFE_INTEGER);
@@ -79,8 +91,9 @@ export function CatalogueView({ initialProducts }: { initialProducts: Product[] 
   const paginationItems = getPaginationItems(currentPage, totalPages);
 
   const updateSelected = (value: string[]) => { setSelected(value); setPage(1); };
+  const updateSelectedBrands = (value: string[]) => { setSelectedBrands(value); setPage(1); };
   const updateInStockOnly = (value: boolean) => { setInStockOnly(value); setPage(1); };
-  const filterProps = { selected, setSelected: updateSelected, inStockOnly, setInStockOnly: updateInStockOnly };
+  const filterProps = { selected, setSelected: updateSelected, selectedBrands, setSelectedBrands: updateSelectedBrands, inStockOnly, setInStockOnly: updateInStockOnly, categories, brands: availableBrands };
 
   function changePage(nextPage: number) {
     setPage(Math.min(Math.max(nextPage, 1), totalPages));

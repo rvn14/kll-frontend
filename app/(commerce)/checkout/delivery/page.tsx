@@ -1,9 +1,21 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight, MapPin } from "lucide-react";
 import { CheckoutStepper } from "@/components/checkout/checkout-stepper";
 import { OrderSummary } from "@/components/checkout/order-summary";
-import { mockAddresses } from "@/mocks/data";
+import { DeliveryForm } from "@/components/checkout/delivery-form";
+import { Suspense } from "react";
 
 export const metadata: Metadata = { title: "Delivery details" };
-export default function DeliveryPage() { return <main id="main-content" className="shell py-8 sm:py-12"><CheckoutStepper current={1} /><div className="grid gap-7 lg:grid-cols-[1fr_360px]"><section className="panel p-5 sm:p-8"><div className="flex items-center gap-3"><span className="flex size-11 items-center justify-center rounded-2xl bg-soft/55 text-brand"><MapPin className="size-5" /></span><div><h1 className="text-2xl font-black text-brand">Where should we deliver?</h1><p className="text-sm text-ink-muted">Choose a saved address or enter delivery details.</p></div></div><fieldset className="mt-7 grid gap-3 sm:grid-cols-2"><legend className="sr-only">Saved addresses</legend>{mockAddresses.map((address) => <label className="relative rounded-2xl border border-border p-4 has-checked:border-brand has-checked:bg-soft/25" key={address.id}><input type="radio" name="delivery-address" defaultChecked={address.isDefault} className="absolute right-4 top-4 size-4 accent-brand" /><span className="text-sm font-black text-brand">{address.label}</span>{address.isDefault && <span className="ml-2 rounded-full bg-soft px-2 py-1 text-[10px] font-black text-brand">Default</span>}<span className="mt-3 block text-sm font-bold text-brand">{address.recipient}</span><span className="mt-1 block text-xs leading-5 text-ink-muted">{address.summary}<br />{address.phone}</span></label>)}</fieldset><div className="my-7 flex items-center gap-3"><span className="h-px flex-1 bg-border" /><span className="text-xs font-bold text-ink-muted">or add another address</span><span className="h-px flex-1 bg-border" /></div><form className="grid gap-4 sm:grid-cols-2"><label><span className="field-label">Recipient name</span><input className="field" autoComplete="name" /></label><label><span className="field-label">Phone number</span><input className="field" type="tel" autoComplete="tel" /></label><label className="sm:col-span-2"><span className="field-label">Delivery address</span><textarea className="field min-h-28" autoComplete="street-address" /></label><label><span className="field-label">City / town</span><input className="field" autoComplete="address-level2" /></label><label><span className="field-label">Delivery note <span className="font-normal text-ink-muted">(optional)</span></span><input className="field" /></label></form><div className="mt-7 flex justify-end"><Link href="/checkout/payment" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-brand px-6 text-sm font-black text-white">Continue to payment <ArrowRight className="size-4" /></Link></div></section><OrderSummary /></div></main>; }
+
+export default function DeliveryPage() { 
+  return (
+    <main id="main-content" className="shell py-8 sm:py-12">
+      <CheckoutStepper current={1} />
+      <div className="grid gap-7 lg:grid-cols-[1fr_360px]">
+        <Suspense fallback={<div className="panel p-5 sm:p-8">Loading delivery options...</div>}>
+          <DeliveryForm />
+        </Suspense>
+        <OrderSummary />
+      </div>
+    </main>
+  ); 
+}

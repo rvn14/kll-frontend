@@ -9,6 +9,8 @@ export interface Product {
   name: string;
   category: string;
   categorySlug: string;
+  brand: string;
+  brandSlug: string;
   description: string;
   price: number | null;
   originalPrice?: number | null;
@@ -16,15 +18,17 @@ export interface Product {
   stock: StockLevel;
   warranty: string;
   badge?: "New" | "Offer" | "Best seller";
-  visual: "tv" | "fridge" | "washer" | "air" | "kitchen" | "audio" | "phone" | "fan" | "sewing" | "parts" | "tool" | "oil" | "pump" | "heater" | "clock";
+  visual: string;
+  visuals?: string[];
   specifications: Array<{ label: string; value: string }>;
 }
 
 export interface Category {
+  id?: number;
   name: string;
   slug: string;
   description: string;
-  icon: Product["visual"];
+  icon: string;
 }
 
 export interface CartLine {

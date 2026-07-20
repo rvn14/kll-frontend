@@ -6,6 +6,7 @@ import "lenis/dist/lenis.css";
 import { useEffect, useState } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
+import { CartInitializer } from "@/components/cart-initializer";
 
 function SmoothScroll({ children }: { children: React.ReactNode }) {
   const [reduceMotion, setReduceMotion] = useState(false);
@@ -31,6 +32,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <TooltipProvider>
         <SmoothScroll>{children}</SmoothScroll>
         <Toaster richColors position="top-right" />
+        <CartInitializer />
       </TooltipProvider>
     </QueryClientProvider>
   );

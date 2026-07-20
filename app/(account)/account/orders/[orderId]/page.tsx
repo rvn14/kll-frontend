@@ -3,6 +3,70 @@ import { Check, ChevronLeft, Circle, FileText, MapPin, PackageCheck } from "luci
 import { notFound } from "next/navigation";
 import { OrderStatusBadge } from "@/components/ui/status-badge";
 import { formatLkr } from "@/lib/formatting/currency";
-import { mockOrders } from "@/mocks/data";
+import { getMyOrderServer } from "@/services/orders.server.service";
 
-export default async function OrderDetailPage({ params }: { params: Promise<{ orderId: string }> }) { const { orderId } = await params; const order = mockOrders.find((item) => item.id === orderId) ?? (orderId === "KLL-2026-1049" ? { ...mockOrders[0], id: orderId } : undefined); if (!order) notFound(); const timeline = ["Order received", "Payment confirmed", "Preparing your items", "Out for delivery", "Delivered"]; const completed = order.status === "delivered" ? 5 : order.status === "shipped" ? 4 : order.status === "processing" ? 3 : 1; return <div><Link href="/account/orders" className="inline-flex min-h-11 items-center gap-2 text-sm font-black text-brand hover:underline"><ChevronLeft className="size-4" />Back to orders</Link><div className="mt-3 flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold text-ink-muted">Order</p><h2 className="mt-1 text-3xl font-black text-brand">{order.id}</h2></div><OrderStatusBadge status={order.status} /></div><div className="mt-6 grid gap-5 xl:grid-cols-[1fr_310px]"><section className="panel p-6"><div className="flex items-center gap-3"><PackageCheck className="size-5 text-brand" /><h3 className="text-lg font-black text-brand">Order progress</h3></div><ol className="mt-6 space-y-0">{timeline.map((label, index) => <li className="relative flex min-h-16 gap-4" key={label}>{index < timeline.length - 1 && <span className={`absolute left-[11px] top-6 h-full w-px ${index < completed - 1 ? "bg-brand" : "bg-border"}`} />}<span className={`relative z-10 mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full ${index < completed ? "bg-brand text-white" : "bg-white text-ink-muted ring-1 ring-border"}`}>{index < completed ? <Check className="size-3" /> : <Circle className="size-2" />}</span><div><p className={`text-sm font-black ${index < completed ? "text-brand" : "text-ink-muted"}`}>{label}</p><p className="mt-1 text-xs text-ink-muted">{index < completed ? "Status updated by K & LL Traders" : "Pending"}</p></div></li>)}</ol></section><div className="space-y-5"><section className="panel p-5"><MapPin className="size-5 text-brand" /><h3 className="mt-4 font-black text-brand">Delivery address</h3><p className="mt-2 text-sm leading-6 text-ink-muted">Ayesha Perera<br />42 Lake Road<br />Colombo 05</p></section><section className="panel p-5"><p className="text-xs font-bold text-ink-muted">Backend total</p><p className="mt-1 text-2xl font-black text-brand">{formatLkr(order.total)}</p><p className="mt-2 text-xs text-ink-muted">{order.paymentMethod}</p><Link href={`/account/orders/${order.id}/bill`} className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full bg-soft/55 px-4 text-xs font-black text-brand"><FileText className="size-4" />Bill summary</Link></section></div></div></div>; }
+export default async function OrderDetailPage({ params }: { params: Promise<{ orderId: string }> }) { 
+  const { orderId } = await params; 
+  
+  const order = await getMyOrderServer(orderId);
+  if (!order) notFound(); 
+  
+  const timeline = ["Order received", "Payment confirmed", "Preparing your items", "Out for delivery", "Delivered"]; 
+  const completed = order.status === "DELIVERED" ? 5 : order.status === "SHIPPED" ? 4 : order.status === "PROCESSING" ? 3 : order.status === "CONFIRMED" ? 2 : 1; 
+  
+  return (
+    <div>
+      <Link href="/account/orders" className="inline-flex min-h-11 items-center gap-2 text-sm font-black text-brand hover:underline">
+        <ChevronLeft className="size-4" />Back to orders
+      </Link>
+      <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-xs font-bold text-ink-muted">Order</p>
+          <h2 className="mt-1 text-3xl font-black text-brand">KLL-{order.id}</h2>
+        </div>
+        <OrderStatusBadge status={order.status.toLowerCase()} />
+      </div>
+      <div className="mt-6 grid gap-5 xl:grid-cols-[1fr_310px]">
+        <section className="panel p-6">
+          <div className="flex items-center gap-3">
+            <PackageCheck className="size-5 text-brand" />
+            <h3 className="text-lg font-black text-brand">Order progress</h3>
+          </div>
+          <ol className="mt-6 space-y-0">
+            {timeline.map((label, index) => (
+              <li className="relative flex min-h-16 gap-4" key={label}>
+                {index < timeline.length - 1 && <span className={`absolute left-[11px] top-6 h-full w-px ${index < completed - 1 ? "bg-brand" : "bg-border"}`} />}
+                <span className={`relative z-10 mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full ${index < completed ? "bg-brand text-white" : "bg-white text-ink-muted ring-1 ring-border"}`}>
+                  {index < completed ? <Check className="size-3" /> : <Circle className="size-2" />}
+                </span>
+                <div>
+                  <p className={`text-sm font-black ${index < completed ? "text-brand" : "text-ink-muted"}`}>{label}</p>
+                  <p className="mt-1 text-xs text-ink-muted">{index < completed ? "Status updated by K & LL Traders" : "Pending"}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+        <div className="space-y-5">
+          <section className="panel p-5">
+            <MapPin className="size-5 text-brand" />
+            <h3 className="mt-4 font-black text-brand">Delivery address</h3>
+            <p className="mt-2 text-sm leading-6 text-ink-muted">
+              {order.delivery_address?.recipient_name || "Recipient"}<br />
+              {order.delivery_address?.street_address}<br />
+              {order.delivery_address?.city}
+            </p>
+          </section>
+          <section className="panel p-5">
+            <p className="text-xs font-bold text-ink-muted">Backend total</p>
+            <p className="mt-1 text-2xl font-black text-brand">{formatLkr(order.total_amount)}</p>
+            <p className="mt-2 text-xs text-ink-muted">{order.order_type}</p>
+            <Link href={`/account/orders/${order.id}/bill`} className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full bg-soft/55 px-4 text-xs font-black text-brand">
+              <FileText className="size-4" />Bill summary
+            </Link>
+          </section>
+        </div>
+      </div>
+    </div>
+  ); 
+}

@@ -5,6 +5,12 @@ export const apiEndpoints = {
     byId: (itemId: string) => `/api/v1/items/${itemId}`,
     restore: (itemId: string) => `/api/v1/items/${itemId}/restore`,
   },
+  categories: {
+    list: "/api/v1/categories",
+  },
+  brands: {
+    search: "/api/v1/brands/search",
+  },
   uploads: "/api/v1/uploads",
   auth: {
     register: "/api/v1/auth/register",
@@ -48,6 +54,7 @@ export const apiEndpoints = {
   },
   adminOrders: {
     list: "/api/v1/admin/orders",
+    search: "/api/v1/admin/orders/search",
     byId: (orderId: string) => `/api/v1/admin/orders/${orderId}`,
     status: (orderId: string) => `/api/v1/admin/orders/${orderId}/status`,
   },

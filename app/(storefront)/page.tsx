@@ -5,13 +5,17 @@ import { ProductGrid } from "@/components/storefront/product-grid";
 import { PromoBlocks } from "@/components/storefront/promo-blocks";
 import { TrustStrip } from "@/components/storefront/trust-strip";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { products } from "@/mocks/data";
+import { getItemsServer } from "@/services/items.server.service";
+import { getCategoriesServer } from "@/services/categories.server.service";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const products = await getItemsServer({ limit: 8 });
+  const categories = await getCategoriesServer();
+  
   return (
     <main id="main-content">
       <HeroBanner />
-      <section className="shell page-section"><SectionHeading eyebrow="Browse your way" title="Everything for a better home" description="Start with the room or product you have in mind." href="/shop" /><CategoryShortcuts /></section>
+      <section className="shell page-section"><SectionHeading eyebrow="Browse your way" title="Everything for a better home" description="Start with the room or product you have in mind." href="/shop" /><CategoryShortcuts categories={categories} /></section>
       <section className="bg-white py-14 sm:py-20"><div className="shell"><SectionHeading eyebrow="Current shop stock" title="Televisions and audio" description="Browse the quantities reported in the uploaded stock list. Contact the shop for current pricing." href="/category/televisions-audio" /><ProductGrid products={products.slice(0, 4)} /></div></section>
       <section className="shell page-section"><PromoBlocks /></section>
       <section className="shell pb-16 sm:pb-24"><SectionHeading eyebrow="More in stock" title="Audio and home essentials" href="/shop" linkLabel="Browse the inventory" /><ProductGrid products={products.slice(4, 8)} /></section>

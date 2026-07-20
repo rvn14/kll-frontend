@@ -3,10 +3,9 @@
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { products } from "@/mocks/data";
 import { InputGroup, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
 
-export function SearchBar({ compact = false }: { compact?: boolean }) {
+export function SearchBar({ compact = false, suggestions = [] }: { compact?: boolean, suggestions?: string[] }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
 
@@ -22,7 +21,7 @@ export function SearchBar({ compact = false }: { compact?: boolean }) {
         <InputGroupButton type="submit" size="icon-sm" className="size-9 rounded-full bg-brand text-white hover:bg-brand-strong" aria-label="Submit search"><Search className="size-4.5" /></InputGroupButton>
       </InputGroup>
       <datalist id="product-search-suggestions">
-        {products.slice(0, 6).map((product) => <option value={product.name} key={product.id} />)}
+        {suggestions.map((suggestion) => <option value={suggestion} key={suggestion} />)}
       </datalist>
     </form>
   );
